@@ -4,6 +4,7 @@ import com.zgamelogic.annotations.DiscordController;
 import com.zgamelogic.annotations.DiscordMapping;
 import com.zgamelogic.data.messages.Message;
 import com.zgamelogic.data.messages.MessageRepository;
+import com.zgamelogic.services.ModerationService;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
@@ -14,9 +15,11 @@ import java.util.Optional;
 @DiscordController
 public class ModerationBot {
     private final MessageRepository messageRepository;
+    private final ModerationService moderationService;
 
-    public ModerationBot(MessageRepository messageRepository) {
+    public ModerationBot(MessageRepository messageRepository, ModerationService moderationService) {
         this.messageRepository = messageRepository;
+        this.moderationService = moderationService;
     }
 
     @DiscordMapping
@@ -34,6 +37,9 @@ public class ModerationBot {
             event.getChannel().getIdLong(),
             event.getMessage().getContentDisplay()
         ));
+        if(moderationService.isBannedWordIncluded(event.getMessage().getContentDisplay())) {
+            // TODO banned word
+        }
     }
 
     @DiscordMapping

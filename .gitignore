@@ -40,3 +40,4 @@ build/
 application.properties
 data.mv.db
 data.trace.db
+banned-words.txt
