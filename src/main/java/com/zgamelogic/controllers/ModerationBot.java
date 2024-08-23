@@ -2,24 +2,43 @@ package com.zgamelogic.controllers;
 
 import com.zgamelogic.annotations.DiscordController;
 import com.zgamelogic.annotations.DiscordMapping;
+import com.zgamelogic.data.configurations.BotConfiguration;
 import com.zgamelogic.data.messages.Message;
 import com.zgamelogic.data.messages.MessageRepository;
 import com.zgamelogic.services.ModerationService;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @DiscordController
 public class ModerationBot {
     private final MessageRepository messageRepository;
     private final ModerationService moderationService;
+    private final BotConfiguration botConfiguration;
 
-    public ModerationBot(MessageRepository messageRepository, ModerationService moderationService) {
+    private TextChannel bannedWordsChannel;
+
+    public ModerationBot(
+            MessageRepository messageRepository,
+            ModerationService moderationService,
+            BotConfiguration botConfiguration
+    ) {
         this.messageRepository = messageRepository;
         this.moderationService = moderationService;
+        this.botConfiguration = botConfiguration;
+    }
+
+    @DiscordMapping
+    private void onReady(ReadyEvent event) {
+        JDA bot = event.getJDA();
+        bot.getGuildById(botConfiguration.getDiscordGuildId()).getTextChannelById(botConfiguration.getBannedWordsChannelId());
     }
 
     @DiscordMapping
@@ -39,6 +58,7 @@ public class ModerationBot {
         ));
         if(moderationService.isBannedWordIncluded(event.getMessage().getContentDisplay())) {
             // TODO banned word
+            event.getMember().timeoutFor(5, TimeUnit.MINUTES).queue();
         }
     }
 
