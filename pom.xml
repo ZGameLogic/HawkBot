@@ -7,6 +7,7 @@
     <groupId>com.zgamelogic</groupId>
     <artifactId>hawk</artifactId>
     <version>0.0.1</version>
+    <description>A bot for the Hawk himself</description>
 
     <properties>
         <maven.compiler.source>25</maven.compiler.source>
