@@ -5,6 +5,7 @@ import org.springframework.boot.runApplication
 
 /**
  * @author Ben Shabowski
+ * @since 0.0.1
  */
 @SpringBootApplication
 class Application

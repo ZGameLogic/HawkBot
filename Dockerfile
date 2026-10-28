@@ -1,0 +1,12 @@
+FROM --platform=linux/arm64 eclipse-temurin:25-jre-alpine
+LABEL authors="Ben Shabowski"
+
+ARG SPRING_PROFILES_ACTIVE
+ENV SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+
+WORKDIR /app
+COPY /target/hawk-0.0.1.jar /app/hawk-0.0.1.jar
+
+EXPOSE 8080
+
+CMD ["java", "-jar", "hawk-0.0.1.jar"]
