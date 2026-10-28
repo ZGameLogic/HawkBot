@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hawk-bot
+  labels:
+    app: hawk-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hawk-bot
+  template:
+    metadata:
+      name: hawk-bot
+      labels:
+        app: hawk-bot
+    spec:
+      containers:
+        - name: hawk-bot
+          image: ghcr.io/zgamelogic/hawkbot:production
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: apns-volume
+              mountPath: "/apns"
+              readOnly: true
+          env:
+            - name: TZ
+              value: "America/Chicago"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 5
+      volumes:
+        - name: apns-volume
+          secret:
+            secretName: apns-secret
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: ghcr-secret
